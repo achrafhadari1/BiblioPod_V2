@@ -2,6 +2,8 @@
 
 Immerse yourself in the captivating realm of digital literature like never before with our cutting-edge ePub reader. Seamlessly blending functionality with elegance, our platform offers a transformative reading experience tailored to your preferences.
 
+![Home](Screenshots/screencapture-localhost-5173-2024-03-29-15_02_11.png)
+
 Customized Reading Experience: Tailor your reading experience to perfection with a host of customizable features. Adjust font styles, sizes, and backgrounds to suit your comfort. From day to night mode, our reader adapts effortlessly to your environment.
 
 Advanced Annotation Tools: Dive deeper into your eBooks with our advanced annotation tools. Highlight crucial passages, jot down insightful notes, and bookmark essential pages for future reference. Our intuitive interface ensures effortless organization of your annotations, making revisits a breeze.
