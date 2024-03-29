@@ -6,6 +6,8 @@ Immerse yourself in the captivating realm of digital literature like never befor
 
 Customized Reading Experience: Tailor your reading experience to perfection with a host of customizable features. Adjust font styles, sizes, and backgrounds to suit your comfort. From day to night mode, our reader adapts effortlessly to your environment.
 
+![Reader](Screenshots/screencapture-localhost-5173-read-2024-03-29-15_05_30.png)
+![Collection](Screenshots/Screenshot 2024-03-29 150844.png) ![Collection](Screenshots/Screenshot 2024-03-29 150941.png) ![Collection](Screenshots/Screenshot 2024-03-29 150920.png)
 Advanced Annotation Tools: Dive deeper into your eBooks with our advanced annotation tools. Highlight crucial passages, jot down insightful notes, and bookmark essential pages for future reference. Our intuitive interface ensures effortless organization of your annotations, making revisits a breeze.
 
 Dynamic Content Navigation: Say goodbye to traditional page-turning. Navigate through your eBooks effortlessly with our dynamic content navigation tools. Jump to specific chapters, search for keywords, or skim through pages swiftly with our intuitive interface.
