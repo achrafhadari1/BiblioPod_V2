@@ -7,6 +7,8 @@ const TextSelectionCoordinates = ({
   rendition,
   setForceUpdate,
   annotations,
+  updatePageInfo,
+  saveReadingProgress,
   book,
   bookValue,
 }) => {
@@ -113,41 +115,31 @@ const TextSelectionCoordinates = ({
       }
     }
   };
-
-  const handleClickOutside = (event) => {
-    if (colorBoxRef.current && !colorBoxRef.current.contains(event.target)) {
-      setState({
-        ...state,
-        isColorBoxOpen: false,
-      });
-    }
+  const handleClickOutside = () => {
+    setState({
+      ...state,
+      isColorBoxOpen: false,
+    });
   };
-
-  useEffect(() => {
-    if (state.isColorBoxOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [state.isColorBoxOpen]);
+  const stopPropag = (e) => {
+    e.stopPropagation();
+  };
 
   return (
     <>
       <ReaderMenu
         book={book}
         bookValue={bookValue}
+        saveReadingProgress={saveReadingProgress}
         rendition={rendition}
         selectedColor={state.selectedColor}
         className="icon-bookmark-empty"
       />
 
       {state.isColorBoxOpen && (
-        <div className="absolute w-11/12 vh90">
+        <div onClick={handleClickOutside} className="absolute w-5/6 vh90 z-20">
           <div
+            onClick={stopPropag}
             ref={colorBoxRef}
             style={{
               position: "absolute",
@@ -172,9 +164,9 @@ const TextSelectionCoordinates = ({
                 className="w-5 h-5 rounded-full bg-violet-900 cursor-pointer"
                 onClick={() => handleColorSelection("#8A2BE2")} // Violet
               ></div>
-              <div className="h-full">
+              {/* <div className="h-full">
                 <EpubReaderDrawer setSelectedColor={handleColorSelection} />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

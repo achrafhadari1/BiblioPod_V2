@@ -1,0 +1,63 @@
+.authors-image {
+  object-fit: cover;
+  transform: translateX(-80px);
+  width: 14rem;
+}
+
+.authors-image-1 {
+  object-fit: cover;
+  width: 14rem;
+}
+.img-3 {
+  transform: translateX(-13rem);
+  width: 15rem;
+  object-fit: cover;
+}
+.img-4 {
+  transform: translateX(-19rem);
+  width: 15rem;
+  object-fit: cover;
+}
+.img-5 {
+  transform: translateX(-24rem);
+  width: 15rem;
+  object-fit: cover;
+}
+
+.img-6 {
+  transform: translateX(-28rem);
+  width: 15rem;
+  object-fit: cover;
+}
+.img-7 {
+  transform: translateX(-34rem);
+  width: 15rem;
+  object-fit: cover;
+}
+
+.img-8 {
+  transform: translateX(-38rem);
+  width: 15rem;
+  object-fit: cover;
+}
+
+.img-9 {
+  transform: translateX(-42rem);
+  width: 14rem;
+  object-fit: cover;
+}
+.img-10 {
+  transform: translateX(-47rem);
+  width: 14rem;
+  object-fit: cover;
+}
+.mask-image {
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+  -webkit-mask-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(rgba(0, 0, 0, 1)),
+    to(rgba(0, 0, 0, 0))
+  );
+}

@@ -19,7 +19,7 @@ export const HomePage = () => {
   const [bookGoogle, setbookGoogle] = useState([]);
   const [genres, setGenres] = useState([]);
   const [sortOption, setSortOption] = useState("updated");
-
+  const [selectedTab, setSelectedTab] = useState("All");
   const [loading, setLoading] = useState(true);
 
   const selectedBook = JSON.parse(localStorage.getItem("selectedBook"));
@@ -32,6 +32,10 @@ export const HomePage = () => {
       fetchBooks();
     }
   }, [user]);
+  const handleTabChange = (key) => {
+    setSelectedTab(key);
+    console.log("Tab changed to:", key); // Log the new tab value
+  };
 
   const fetchBooks = async () => {
     try {
@@ -41,8 +45,50 @@ export const HomePage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setFileDetails(response.data.books);
-      setGenres(response.data.books.map((book) => book.genre));
+
+      // Assuming your API provides progress information with books
+      console.log(response);
+      const booksWithProgress = await Promise.all(
+        response.data.books.map(async (book) => {
+          try {
+            const progressResponse = await axios.get(
+              `http://127.0.0.1:8000/api/user-book-progress/${book.isbn}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            return {
+              ...book,
+              progress: progressResponse.data.progress.current_percentage || 0,
+            };
+          } catch (error) {
+            if (error.response && error.response.status === 404) {
+              // Handle 404 specifically
+              console.log(`No progress data found for book ISBN: ${book.isbn}`);
+              return {
+                ...book,
+                progress: 0, // Default progress value
+              };
+            } else {
+              // Handle other errors
+              console.error(
+                `Error fetching progress for book ISBN: ${book.isbn}`,
+                error
+              );
+              // Optional: You might choose to re-throw the error or handle it differently
+              return {
+                ...book,
+                progress: 0, // Default progress value
+              };
+            }
+          }
+        })
+      );
+
+      setFileDetails(booksWithProgress);
+      setGenres(booksWithProgress.map((book) => book.genre));
     } catch (error) {
       console.error("Error fetching books:", error);
     } finally {
@@ -190,7 +236,7 @@ export const HomePage = () => {
   const updateBookData = (updatedBook, identifier) => {
     setFileDetails((prevFileDetails) =>
       prevFileDetails.map((book) =>
-        book.isbn === identifier ? updatedBook : book
+        book.isbn === identifier ? { ...book, ...updatedBook } : book
       )
     );
   };
@@ -208,8 +254,23 @@ export const HomePage = () => {
 
   const sortedFilteredBooks = fileDetails
     .filter((book) => {
-      if (selectedGenres.length === 0) return true;
-      return selectedGenres.includes(book.genre);
+      // Genre filtering
+      const genreMatch =
+        selectedGenres.length === 0 || selectedGenres.includes(book.genre);
+
+      // Tab-based filtering
+      let tabMatch = true;
+
+      if (selectedTab === "Currently Reading") {
+        // Check if progress is defined and less than 100
+        tabMatch =
+          book.progress != null && book.progress > 0 && book.progress < 100;
+        console.log(tabMatch);
+      } else if (selectedTab === "Completed") {
+        // Check if progress is defined and exactly 100
+        tabMatch = book.progress != null && book.progress === 100;
+      }
+      return genreMatch && tabMatch;
     })
     .sort((a, b) => {
       switch (sortOption) {
@@ -223,6 +284,7 @@ export const HomePage = () => {
           return new Date(b.updated_at) - new Date(a.updated_at);
       }
     });
+
   const sortOptions = [
     { label: "Updated", value: "updated" },
     { label: "Last Uploaded", value: "last_uploaded" },
@@ -267,7 +329,7 @@ export const HomePage = () => {
           <hr />
           <div className="main-page-coll-pt-inner flex justify-between items-center ">
             <div className="flex items-center gap-2">
-              <div className="text-white bg-black  rounded-full flex justify-center items-center w-8 h-8">
+              <div className="text-white bg-black rounded-full flex justify-center items-center w-8 h-8">
                 <BsListColumnsReverse />
               </div>
               <div>Collections</div>
@@ -285,12 +347,26 @@ export const HomePage = () => {
           bookGenres={genres}
           handleCheckboxChange={handleCheckboxChange}
           sortOptions={sortOptions}
+          selectedTab={selectedTab} // Pass selectedTab
+          handleTabChange={handleTabChange}
           sortOptionHome={sortOption} // Change prop name to sortOptionHome
           handleSortChange={(option) => setSortOption(option)}
         />
         <div className="lib-inner-container default-width ">
           <div className="lib-books-container ">
-            {sortedFilteredBooks.length > 0 ? (
+            {selectedTab === "Currently Reading" &&
+            sortedFilteredBooks.length === 0 ? (
+              <div className="empty-Lib-container">
+                <div className="bold-sub-head">Start Reading a Book</div>
+                <div>Books you read will be shown here.</div>
+              </div>
+            ) : selectedTab === "Completed" &&
+              sortedFilteredBooks.length === 0 ? (
+              <div className="empty-Lib-container">
+                <div className="bold-sub-head">Finish a Book First</div>
+                <div>Mark books as completed to see them here.</div>
+              </div>
+            ) : sortedFilteredBooks.length > 0 ? (
               sortedFilteredBooks.map((book, index) => (
                 <div key={index}>
                   <BookDisplay
@@ -301,16 +377,17 @@ export const HomePage = () => {
                     identifier={book.isbn.toString()}
                     description={book.description}
                     rating={book.rating}
+                    progress={book.progress}
                     updateBookData={updateBookData}
                   />
                 </div>
               ))
             ) : (
-              <div className="empty-Lib-container ">
+              <div className="empty-Lib-container">
                 <div className="bold-sub-head">Your Library is Empty!</div>
                 <div>
-                  add as many books as you want by dropping the epub files or
-                  select them from your local storage
+                  Add as many books as you want by dropping the epub files or
+                  selecting them from your local storage
                 </div>
                 <div className="input-centered ">
                   <Input

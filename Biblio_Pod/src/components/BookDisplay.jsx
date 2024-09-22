@@ -3,6 +3,7 @@ import { IoEyeOutline } from "react-icons/io5";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { MdDeleteOutline } from "react-icons/md";
 import axios from "../api/axios";
+import { toast } from "sonner";
 import {
   Dropdown,
   DropdownTrigger,
@@ -35,6 +36,7 @@ export const BookDisplay = ({
   bookDetails,
   rating: initialRating,
   updateBookData,
+  progress,
 }) => {
   const navigate = useNavigate();
   const goToRead = () => {
@@ -48,41 +50,10 @@ export const BookDisplay = ({
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const [rating, setRating] = useState(initialRating); // Local state for rating
-  const [readingProgress, setReadingProgress] = useState(null);
   const iconClasses =
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
   const { user } = useAuthContext();
-  useEffect(() => {
-    const fetchReadingProgress = async () => {
-      console.log(identifier);
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("Token not found in local storage");
-          return 0;
-        }
-
-        const response = await axios.get(`/user-book-progress/${identifier}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const { current_percentage } = response.data.progress;
-
-        // Set the reading progress state
-        setReadingProgress(current_percentage || 0);
-
-        return current_percentage || 0;
-      } catch (error) {
-        return 0;
-      }
-    };
-
-    // Call the function
-    fetchReadingProgress();
-  }, [identifier]);
 
   const deleteBook = async (identifier) => {
     try {
@@ -95,15 +66,20 @@ export const BookDisplay = ({
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Book deleted successfully:", response.data);
 
       // Emit event to inform parent component about book deletion
       onDeleteBook(identifier);
 
-      // Handle success
+      toast("This book has been deleted", {
+        description:
+          "The selected book has been successfully removed from your library.",
+      });
     } catch (error) {
       console.error("Error deleting book:", error);
-      // Handle error
+      // Optionally, trigger a toast for the error
+      toast("Error deleting book", {
+        description: "There was an issue deleting the book. Please try again.",
+      });
     }
   };
   const deleteProgress = async (isbn) => {
@@ -144,9 +120,7 @@ export const BookDisplay = ({
           <img className="BookPoster" src={img} alt="Book Poster" />
         )}
 
-        {readingProgress > 0 && (
-          <p className="bookProgress">{readingProgress}%</p>
-        )}
+        {progress > 0 && <p className="bookProgress">{progress}%</p>}
 
         <p className="bookTitle" onClick={() => goToRead()}>
           {title}
@@ -209,14 +183,16 @@ export const BookDisplay = ({
                   </DropdownItem>
                 </DropdownSection>
 
-                {readingProgress > 0 && (
+                {progress > 0 && (
                   <DropdownSection title="Danger zone">
                     <DropdownItem
                       key="delete"
                       className="text-danger"
                       color="danger"
                       description="Permanently clear your reading progress"
-                      onClick={() => deleteProgress(identifier.toString())}
+                      onClick={() => {
+                        deleteProgress(identifier.toString());
+                      }}
                       startContent={
                         <DeleteDocumentIcon
                           className={cn(iconClasses, "text-danger")}

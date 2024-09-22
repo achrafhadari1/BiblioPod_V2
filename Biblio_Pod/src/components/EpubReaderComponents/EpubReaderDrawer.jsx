@@ -99,10 +99,9 @@ export const EpubReaderDrawer = ({ setSelectedColor }) => {
             placeholder="Write your thoughts here..."
           ></textarea>
         </div>
-
-        <DrawerFooter>
+        <DrawerFooter className="m-auto">
           <DrawerClose>
-            <Button onClick={handleSubmit} className="w-1/8 m-auto">
+            <Button className="w-1/8 m-auto" onClick={handleSubmit}>
               Submit
             </Button>
           </DrawerClose>

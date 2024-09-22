@@ -10,8 +10,7 @@ import { GrNext } from "react-icons/gr";
 import { GrPrevious } from "react-icons/gr";
 import { FiMoon } from "react-icons/fi";
 import { CircularProgress } from "@nextui-org/react";
-import { BiHomeAlt2 } from "react-icons/bi";
-import { Link } from "react-router-dom";
+
 import TextSelectionCoordinates from "../components/Modals/TextSelectionCoordinates";
 import { EpubReaderSettings } from "../components/EpubReaderComponents/EpubReaderSettings";
 
@@ -27,9 +26,11 @@ function EpubReader() {
   const [rendition, setRendition] = useState(null);
   const [bookData, setBookData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedTextCoords, setSelectedTextCoords] = useState({ x: 55, y: 0 });
   const [forceUpdate, setForceUpdate] = useState({});
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [showTitleBar, setShowTitleBar] = useState(true);
+  const [isDarkClicked, setisDarkClicked] = useState(null);
   useEffect(() => {
     const fetchBook = async () => {
       try {
@@ -87,7 +88,18 @@ function EpubReader() {
 
         renderBook(newBook);
       } catch (error) {
-        console.error("Error loading book:", error);
+        if (
+          error.message &&
+          error.message.includes("File not found in the epub")
+        ) {
+          console.error(
+            "Error loading book: Missing resource file (e.g., stylesheet.css)",
+            error
+          );
+          // Optionally, you can display a user-friendly message or perform any additional error handling here
+        } else {
+          console.error("Error loading book:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -97,6 +109,22 @@ function EpubReader() {
 
     // Cleanup function
   }, [bookData]);
+
+  useEffect(() => {
+    let timer;
+    const handleMouseMove = () => {
+      setShowTitleBar(true);
+      clearTimeout(timer);
+      timer = setTimeout(() => setShowTitleBar(false), 10000); // Hide title bar after 5 seconds of inactivity
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      clearTimeout(timer);
+    };
+  }, []);
 
   const saveReadingProgress = async () => {
     if (!rendition || !bookData) {
@@ -194,18 +222,18 @@ function EpubReader() {
     // Register themes
     // Register dark theme
     newRendition.themes.register("dark", {
-      body: {
-        background: "black !important",
-        color: "white !important",
+      ".calibre": {
+        background: "black ",
+        color: "white ",
         "font-family": "lora",
       },
     });
 
     // Register default theme
     newRendition.themes.register("default", {
-      body: {
-        background: "white !important",
-        color: "black !important",
+      ".calibre": {
+        background: "white ",
+        color: "black ",
         "font-family": "lora",
       },
     });
@@ -218,23 +246,42 @@ function EpubReader() {
     // Event listener for resizing the window
     const resizeListener = () => {
       newRendition.resize(`${window.innerWidth}px`, "90vh");
+      // Update page info after rendering
+      updatePageInfo();
     };
 
     // Event listener for switching themes
-    const themesListener = () => {
-      newRendition.themes.select(isDarkTheme ? "dark" : "default");
-    };
 
     // Add event listeners
     window.addEventListener("resize", resizeListener);
-    window.addEventListener("themes", themesListener);
 
     // Cleanup: remove event listeners on component unmount
+
     return () => {
       window.removeEventListener("resize", resizeListener);
-      window.removeEventListener("themes", themesListener);
     };
   };
+  const selectTheme = () => {
+    if (rendition && rendition.themes) {
+      if (isDarkTheme) {
+        if (isDarkClicked > 0) {
+          rendition.themes.override("transition", "0.5s ease-in-out");
+        }
+        rendition.themes.override("background", "black");
+        rendition.themes.override("color", "white");
+      } else {
+        if (isDarkClicked > 0) {
+          rendition.themes.override("transition", "0.5s ease-in-out");
+        }
+        rendition.themes.override("background", "white");
+        rendition.themes.override("color", "black");
+      }
+    }
+  };
+  // Listen for changes in isDarkTheme and call selectTheme
+  useEffect(() => {
+    selectTheme();
+  }, [isDarkTheme]);
 
   useEffect(() => {
     const fetchReadingProgress = async () => {
@@ -258,6 +305,7 @@ function EpubReader() {
         setCurrentCFI(current_cfi);
         if (rendition && current_cfi) {
           rendition.display(current_cfi);
+          updatePageInfo();
         }
       } catch (error) {
         console.error("Error fetching reading progress:", error);
@@ -292,13 +340,29 @@ function EpubReader() {
       saveReadingProgress();
     };
   }, []);
+  const updatePageInfo = () => {
+    if (rendition && book) {
+      const currentCfi = rendition.currentLocation().start.cfi;
+      const currentPercentage =
+        rendition.book.locations.percentageFromCfi(currentCfi);
+      const currentPage = Math.ceil(
+        currentPercentage * (rendition.book.locations.total / 2)
+      );
+      const totalPages = Math.round(rendition.book.locations.total / 2);
+
+      setCurrentPage(currentPage);
+      setTotalPages(totalPages);
+    }
+  };
 
   const nextBtn = () => {
     if (rendition) {
       rendition.next();
+
       const newCFI = rendition.location.start.cfi;
       const newPercentage =
         rendition.book.locations.percentageFromCfi(newCFI) * 100;
+      updatePageInfo();
       setCurrentCFI((prevCFI) => {
         localStorage.setItem("currentCFI", newCFI);
         localStorage.setItem("currentPercentageFromCFI", newPercentage);
@@ -316,6 +380,7 @@ function EpubReader() {
       const newCFI = rendition.location.start.cfi;
       const newPercentage =
         rendition.book.locations.percentageFromCfi(newCFI) * 100;
+      updatePageInfo();
       setCurrentCFI((prevCFI) => {
         localStorage.setItem("currentCFI", newCFI);
         localStorage.setItem("currentPercentageFromCFI", newPercentage);
@@ -325,8 +390,9 @@ function EpubReader() {
   };
   const toggleTheme = () => {
     setIsDarkTheme(!isDarkTheme);
+    setisDarkClicked(1);
     if (rendition) {
-      rendition.themes.select(isDarkTheme ? "default" : "dark");
+      rendition.themes.override(isDarkTheme ? "default" : "dark");
     }
   };
 
@@ -366,13 +432,21 @@ function EpubReader() {
   }
 
   return (
-    <div className={isDarkTheme ? "dark h-lvh " : "default h-lvh "}>
-      <div className="titlebar">
+    <div
+      className={
+        isDarkTheme
+          ? "dark h-lvh main-book-reader-container"
+          : "main-book-reader-container default h-lvh "
+      }
+    >
+      <div className={showTitleBar ? "titlebar" : "titlebar opacity-low"}>
         <TextSelectionCoordinates
           bookValue={bookValue}
           book={book}
+          updatePageInfo={updatePageInfo}
           rendition={rendition}
           forceUpdate={forceUpdate}
+          saveReadingProgress={saveReadingProgress}
           setForceUpdate={setForceUpdate}
         />
 
@@ -435,6 +509,15 @@ function EpubReader() {
         >
           <GrNext />
         </button>
+      </div>
+      <div
+        className={
+          showTitleBar
+            ? "absolute bottom-0 left-3 "
+            : "absolute bottom-0 left-3 opacity-low"
+        }
+      >
+        {currentPage} of {totalPages}{" "}
       </div>
     </div>
   );

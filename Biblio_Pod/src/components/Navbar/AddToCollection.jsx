@@ -3,8 +3,9 @@ import axios from "../../api/axios";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { BiAddToQueue } from "react-icons/bi";
+import { toast } from "sonner";
 
-export const AddToCollection = () => {
+export const AddToCollection = ({ onCollectionAdded }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [collectionData, setCollectionData] = useState({
     collection_name: "",
@@ -27,10 +28,14 @@ export const AddToCollection = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
       closeModal();
+      toast("Collection created successfully");
+      onCollectionAdded(); // Call the callback to update the collections list
     } catch (error) {
-      console.error("Error creating collection:", error);
+      toast("Error creating collection", {
+        description:
+          "There was an issue creating the collection. Please try again.",
+      });
     }
   };
 
@@ -116,7 +121,7 @@ export const AddToCollection = () => {
               </div>
               {/* End of content divs */}
 
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div className="make_col_btns bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
                   onClick={closeModal}
                   type="button"

@@ -10,6 +10,8 @@ import { AuthProvider, useAuthContext } from "./context/AuthContext"; // Import 
 import { Collection } from "./Pages/Collection/Collection";
 import { CollectionLists } from "./Pages/Collection/CollectionLists";
 import { Settings } from "./Pages/Settings";
+import { Landing } from "./Pages/Landing/Landing";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   const { user, getUser } = useAuthContext();
@@ -40,12 +42,16 @@ function App() {
           <>
             {/* Private routes accessible only when the user is authenticated */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<Navigate to="/" />} />
+            <Route path="/signup" element={<Navigate to="/" />} />
+
             <Route path="/home" element={<HomePage />} />
             <Route path="/about" element={<HomePage />} />
             <Route path="/highlights" element={<Highlights />} />
             <Route path="/read" element={<EpubReader />} />
             <Route path="/collections/:id" element={<Collection />} />
             <Route path="/Settings" element={<Settings />} />
+            <Route path="/Landing" element={<Landing />} />
 
             <Route path="/collections" element={<CollectionLists />} />
             {/* Add more routes as needed */}
@@ -53,7 +59,8 @@ function App() {
         ) : (
           <>
             {/* Public routes accessible when the user is not authenticated */}
-            <Route path="/" element={<SignIn />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             {/* Redirect to home after signup */}
             <Route path="*" element={<Navigate to="/" />} />{" "}
@@ -61,6 +68,7 @@ function App() {
           </>
         )}
       </Routes>
+      <Toaster />
     </AuthProvider>
   );
 }

@@ -85,8 +85,8 @@ export const EditCollection = ({
         <DrawerHeader>
           <DrawerTitle>Edit "{collectionName}" List</DrawerTitle>
         </DrawerHeader>
-        <div className="mt-2 justify-evenly flex w-full">
-          <p className="mb-8 w-3/6 text-sm text-gray-500 flex flex-col gap-4 text-left">
+        <div className="form_edit_grid mt-2 justify-evenly flex w-full">
+          <p className="form_edit_child mb-8 w-3/6 text-sm text-gray-500 flex flex-col gap-4 text-left">
             <div className="m-auto grid w-full max-w-sm items-center gap-1.5">
               <Label htmlFor="name">Name</Label>
               <Input
@@ -110,7 +110,7 @@ export const EditCollection = ({
               ></textarea>
             </div>
           </p>
-          <div className="w-5/12 flex flex-col justify-center">
+          <div className="remove_books_edit w-5/12 flex flex-col justify-center">
             {books.map((book) => (
               <div className="edit-books-lineup flex gap-4" key={book.isbn}>
                 <div className="w-11/12">{book.title}</div>
@@ -124,7 +124,7 @@ export const EditCollection = ({
             ))}
           </div>
         </div>
-        <DrawerFooter>
+        <DrawerFooter className="drawer_buttons">
           <DrawerClose>
             <Button className="w-1/8 m-auto" onClick={handleSubmit}>
               Modify

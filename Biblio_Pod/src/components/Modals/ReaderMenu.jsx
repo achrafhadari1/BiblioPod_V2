@@ -4,7 +4,7 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 import { FaListUl } from "react-icons/fa";
 import { BiHighlight } from "react-icons/bi";
 import axios from "../../api/axios";
-
+import { ScrollArea } from "../../components/ui/scroll-area";
 import "../style/Modals.css";
 import { FaRegBookmark } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -24,6 +24,7 @@ export const ReaderMenu = ({
   rendition,
   setForceUpdate,
   selectedColor,
+  saveReadingProgress,
 }) => {
   const [MenuisOpen, setMenuOpen] = useState(false);
   const [chapters, setChapters] = useState([]);
@@ -38,39 +39,6 @@ export const ReaderMenu = ({
   });
 
   useEffect(() => {
-    //   const fetchAnnotations = async () => {
-    //     if (rendition && rendition.annotations._annotations) {
-    //       const allAnnotations = Object.values(
-    //         rendition.annotations._annotations
-    //       );
-
-    //       if (allAnnotations.length > 0) {
-    //         const fetchedAnnotations = await Promise.all(
-    //           allAnnotations.map(async (annotation) => {
-    //             try {
-    //               const cfiRange = annotation.range.cfiRange;
-    //               const range = await rendition.book.getRange(cfiRange);
-    //               const selectedText = range ? range.toString() : "";
-    //               return {
-    //                 cfiRange,
-    //                 selectedText,
-    //               };
-    //             } catch (error) {
-    //               console.error("Error fetching range:", error);
-    //               return null;
-    //             }
-    //           })
-    //         );
-
-    //         setAnnotations(
-    //           fetchedAnnotations.filter((annotation) => annotation !== null)
-    //         );
-    //       }
-    //     }
-    //   };
-
-    //   fetchAnnotations();
-    // }, [rendition]);
     const fetchAnnotations = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -93,7 +61,7 @@ export const ReaderMenu = ({
     };
 
     fetchAnnotations();
-  }, []);
+  }, [bookValue, selectedColor]);
 
   const handleMenuOpening = () => {
     setMenuOpen(!MenuisOpen);
@@ -171,7 +139,7 @@ export const ReaderMenu = ({
       </div>
       <IoMdMenu className="cursor-pointer" onClick={handleMenuOpening} />
       <div
-        className={`menu-con flex-col flex w-72 bg-zinc-300 h-screen fixed top-0 left-0 ${
+        className={`menu-con flex-col flex w-72 bg-black h-screen fixed top-0 left-0 ${
           !MenuisOpen ? "hidden" : "not-hidden"
         }`}
       >
@@ -184,7 +152,7 @@ export const ReaderMenu = ({
         </div>
         <Tabs
           defaultValue="content"
-          className="w-full flex flex-col-reverse h-90per "
+          className="w-full flex flex-col-reverse h-12 h-90per "
         >
           <TabsList className="w-auto self-center h-auto">
             <TabsTrigger value="content">
@@ -212,36 +180,36 @@ export const ReaderMenu = ({
               </div>
             </TabsTrigger>
           </TabsList>
-          <TabsContent className="h-5/6  " value="content">
+          <TabsContent className="height-34rem " value="content">
             <div id="style-4" className="scrollbar text-left p-l0-1 pl-4">
-              <div className="force-overflow flex flex-col gap-5">
+              <ScrollArea className="force-overflow flex flex-col gap-5">
                 {chapters.map((chapter, i) => (
                   <div
-                    className="h-11	flex pl-2 items-center chapter-title hover:bg-violet-600 active:bg-violet-700"
+                    className="	flex pl-2 text-white items-center chapter-title hover:bg-violet-600 active:bg-violet-700"
                     key={i}
                     onClick={() => {
                       gotoChapter(chapter.href);
+                      saveReadingProgress();
                     }}
                   >
                     {chapter.label}
                   </div>
                 ))}
-              </div>
+              </ScrollArea>
             </div>
           </TabsContent>
-          <TabsContent className="h-5/6 mb-4" value="annotations">
-            <div id="style-4" className="scrollbar text-left p-l0-1 pl-4">
-              <div className="force-overflow flex flex-col gap-5">
+          <TabsContent className="height-34rem" value="annotations">
+            <ScrollArea className="w-full h-full  rounded-md text-left pl-4">
+              <div className=" flex flex-col gap-5">
                 {annotations.map((annotation, index) => {
                   const { cfi_range, text } = annotation;
-                  console.log("Rendering:", annotation);
                   return (
-                    <div className="quote" key={index}>
-                      <div id="style-5" className="scrollbar-2">
-                        <div className="">
-                          <div className="p-1 italic"> "{text}"</div>
+                    <div className="quote pr-3" key={index}>
+                      <ScrollArea className="scrollbar-2">
+                        <div>
+                          <div className="pr-3 italic">"{text}"</div>
                         </div>
-                      </div>
+                      </ScrollArea>
                       <div className="flex justify-between px-3">
                         <p
                           className="underline cursor-pointer"
@@ -255,7 +223,7 @@ export const ReaderMenu = ({
                           <FaRegTrashCan />
                           <button
                             onClick={() => {
-                              handleDeleteAnnotation();
+                              handleDeleteAnnotation(cfi_range);
                             }}
                           >
                             delete
@@ -266,10 +234,10 @@ export const ReaderMenu = ({
                   );
                 })}
               </div>
-            </div>
+            </ScrollArea>
           </TabsContent>
 
-          <TabsContent className="h-5/6" value="bookmarks">
+          <TabsContent className="height-34rem" value="bookmarks">
             Change your bookmarks here.
           </TabsContent>
         </Tabs>

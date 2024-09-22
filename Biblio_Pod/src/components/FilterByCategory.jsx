@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-
+import { Tabs, Tab } from "@nextui-org/react";
 export const FilterByCategory = ({
   bookGenres,
   handleCheckboxChange,
   sortOptions,
   sortOptionHome,
-  handleSortChange, // Add handleSortChange prop
+  handleSortChange,
+  selectedTab,
+  handleTabChange, // Add handleSortChange prop
 }) => {
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -18,11 +20,6 @@ export const FilterByCategory = ({
       setUniqueGenres(unique.filter((genre) => genre.trim() !== ""));
     }
   }, [bookGenres]);
-
-  const handleSortToggle = () => {
-    setSortOpen(!sortOpen);
-    setFilterOpen(false);
-  };
 
   const handleFilterToggle = () => {
     setFilterOpen(!filterOpen);
@@ -45,27 +42,28 @@ export const FilterByCategory = ({
   };
 
   return (
-    <div className="flex m-auto w-4/5 h-16 justify-between items-center relative text-white">
+    <div className="filterbuttons flex m-auto w-4/5 h-16 justify-between items-center relative text-white">
       {/* Sort Button */}
       <div className="relative">
-        <button
-          className="text-white bg-black  font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center"
-          onClick={handleSortToggle}
+        <Tabs
+          key={"underlined"}
+          variant={"underlined"}
+          aria-label="Tabs variants"
+          onClick={(e) => handleTabChange(e.target.innerText)}
         >
-          Sort
-          <svg
-            className={`w-4 h-4 ml-2 transform ${
-              sortOpen ? "rotate-180" : "rotate-0"
-            }`}
-            aria-hidden="true"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </button>
+          <Tab key="All" title="All" onClick={() => handleTabChange("All")} />
+          <Tab
+            key="Currently Reading"
+            selectedTab="Currently Reading"
+            title="Currently Reading"
+            onClick={() => handleTabChange("Currently Reading")}
+          />
+          <Tab
+            key="Completed"
+            title="Completed"
+            onClick={() => handleTabChange("Completed")}
+          />
+        </Tabs>
 
         {/* Sort Dropdown */}
         {sortOpen && (
@@ -90,12 +88,12 @@ export const FilterByCategory = ({
       </div>
 
       {/* Filter Button */}
-      <div className="relative">
+      <div className="relative filterbycategorybutton">
         <button
           className="text-white bg-black font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center"
           onClick={handleFilterToggle}
         >
-          Filter by category
+          Categories
           <svg
             className={`w-4 h-4 ml-2 transform ${
               filterOpen ? "rotate-180" : "rotate-0"

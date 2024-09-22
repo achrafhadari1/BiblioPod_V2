@@ -11,7 +11,9 @@ export const CollectionLists = () => {
       <div className="h-full w-full ">
         <div className="con-list-container w-4/5 m-auto flex-wrap   h-full  flex gap-20">
           <div className=" shelf-top">
-            <div className="text-5xl	">Your Collections </div>
+            <div className="text-5xl	container_lists_title">
+              Your Collections{" "}
+            </div>
             <div className="new-col-btn ">
               <AddToCollection />
             </div>

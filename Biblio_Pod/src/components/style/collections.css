@@ -184,3 +184,71 @@
   border-bottom: 1px solid #e5e7eb;
   padding: 10px 0rem;
 }
+@media screen and (max-width: 800px) {
+  .img3 {
+    left: 109px;
+    border-radius: 13px;
+    top: 92px;
+    z-index: 1;
+    opacity: 0.3;
+    position: absolute;
+    height: 46%;
+  }
+  .img2 {
+    left: 61px;
+    border-radius: 13px;
+    z-index: 2;
+    top: 52px;
+    opacity: 0.6;
+    height: 68%;
+    position: absolute;
+  }
+  .img1 {
+    z-index: 3;
+    border-radius: 13px;
+    height: 75%;
+    top: 39px;
+    position: absolute;
+    left: 19px;
+  }
+  .con-list-container {
+    width: 100%;
+  }
+  .shelf-container {
+    width: 100%;
+  }
+  .form_edit_grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .form_edit_child {
+    width: 93%;
+    margin: auto;
+  }
+  .remove_books_edit {
+    width: 100%;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  .edit-books-lineup {
+    width: 90%;
+    flex-direction: row;
+    margin: auto;
+    justify-content: space-between;
+  }
+  .drawer_buttons {
+    flex-direction: row;
+    margin: auto;
+  }
+  .container_lists_title {
+    font-size: 2.5rem;
+  }
+  .new-col-btn {
+    width: 56%;
+  }
+  .make_col_btns {
+    gap: 3rem;
+    display: flex;
+  }
+}

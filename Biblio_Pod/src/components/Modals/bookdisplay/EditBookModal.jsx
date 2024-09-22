@@ -4,6 +4,7 @@ import { Label } from "../../ui/label";
 import axios from "../../../api/axios";
 import { MdUploadFile } from "react-icons/md";
 import { CircularProgress } from "@nextui-org/react";
+import { toast } from "sonner";
 
 export const EditBookModal = ({
   isOpen,
@@ -74,7 +75,7 @@ export const EditBookModal = ({
 
   const handleUpdate = async () => {
     try {
-      // Check if any required fields are empty
+      // Validation and preparation of data
       const requiredFields = ["title", "author"];
       for (const field of requiredFields) {
         if (!formData[field]) {
@@ -83,7 +84,6 @@ export const EditBookModal = ({
         }
       }
 
-      // Remove the thumbnail from formData if it's empty or unchanged
       const updatedFormData = { ...formData };
       if (
         !updatedFormData.thumbnail ||
@@ -92,26 +92,28 @@ export const EditBookModal = ({
         delete updatedFormData.thumbnail;
       }
 
-      // Send update request
+      // Send the update request
       const token = localStorage.getItem("token");
       if (!token) {
         throw new Error("Token not found in local storage");
       }
-      const response = await axios.put(
-        `/books/${identifier}`,
-        updatedFormData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("Book updated successfully:", response.data);
-      updateBookData(response.data.book, identifier);
+      await axios.put(`/books/${identifier}`, updatedFormData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      // Call the updateBookData with both the updated data and the identifier
+      updateBookData(updatedFormData, identifier);
       closeModal();
+      toast("This book has been Edited", {
+        description: "The selected book has been successfully Edited.",
+      });
     } catch (error) {
-      console.error("Error updating book:", error);
+      console.error("Error Editing book:", error);
+      toast("Error Editing book", {
+        description: "There was an issue Editing the book. Please try again.",
+      });
     }
   };
 
@@ -160,8 +162,8 @@ export const EditBookModal = ({
           role="dialog"
           aria-labelledby="modal-headline"
         >
-          <div className="flex justify-around h-full">
-            <div className="flex w-6/12 gap-4 flex-col">
+          <div className="edit-book-child-1 flex justify-around h-full">
+            <div className="edit-book-child-form flex w-6/12 gap-4 flex-col">
               <div className="m-8 font-bold text-xl">Edit your Book</div>
               <div className="m-auto grid w-full max-w-sm items-center gap-1.5">
                 <Label htmlFor="title">Book Title</Label>
@@ -211,7 +213,7 @@ export const EditBookModal = ({
                 ></textarea>
               </div>
             </div>
-            <div className="flex-col justify-center h-full flex items-center w-2/5">
+            <div className="flex-col img_book_edit_container justify-center h-full flex items-center w-2/5">
               <div className="h-1/5"></div>
               <div className="upload-cover-container h-4/6 w-3/4">
                 {formData.thumbnail &&
@@ -241,7 +243,7 @@ export const EditBookModal = ({
             </div>
           </div>
 
-          <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div className="edit-book-child-buttons px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
               onClick={closeModal}
               type="button"

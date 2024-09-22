@@ -167,3 +167,65 @@ input[type="radio"] {
   float: right;
   text-align: center;
 }
+@media screen and (max-width: 800px) {
+  .BookPoster {
+    border-radius: 20px;
+    width: 100%;
+    height: 13rem;
+  }
+  .bookContainer {
+    height: -moz-fit-content;
+    width: 135px;
+  }
+  .lib-books-container {
+    display: flex;
+    flex-direction: row;
+    gap: 45px;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  .lib-inner-container {
+    width: 100% !important;
+  }
+  .hover-container {
+    top: 0;
+    position: absolute;
+    width: 100%;
+    height: 13rem;
+  }
+  .filterbycategorybutton {
+    width: 100%;
+  }
+  .bookProgress {
+    float: left;
+    margin-right: 6px;
+  }
+  .height_37rem {
+    width: 19rem;
+    overflow-y: scroll;
+  }
+  .edit-book-child-1 {
+    flex-direction: column-reverse;
+  }
+  .edit-book-child-form {
+    overflow: scroll;
+    width: 100%;
+  }
+  .upload-cover-container {
+    margin-bottom: 1rem;
+    height: 89.667%;
+  }
+  .upload-cover-container > img {
+    width: 95%;
+  }
+  .edit-book-child-buttons {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-direction: row-reverse;
+  }
+  .img_book_edit_container {
+    width: 100%;
+  }
+}

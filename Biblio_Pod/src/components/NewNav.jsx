@@ -134,23 +134,22 @@ export const NewNav = () => {
                 </Link>
               </li>
             </ul>
-
-            <div className="sidebar_profile flex items-center">
-              <div className="data_text ">
-                {user ? (
-                  <UserDisplay userName={user.name} userEmail={user.email} />
-                ) : (
-                  <>
-                    <span className="nav-user">
-                      <img
-                        src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
-                        alt="logo_img"
-                      />
-                    </span>
-                    <span className="name">Guest</span>
-                  </>
-                )}
-              </div>
+          </div>
+          <div className="sidebar_profile flex items-center">
+            <div className="data_text ">
+              {user ? (
+                <UserDisplay userName={user.name} userEmail={user.email} />
+              ) : (
+                <>
+                  <span className="nav-user">
+                    <img
+                      src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg"
+                      alt="logo_img"
+                    />
+                  </span>
+                  <span className="name">Guest</span>
+                </>
+              )}
             </div>
           </div>
         </div>

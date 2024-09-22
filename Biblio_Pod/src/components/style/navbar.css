@@ -1,3 +1,4 @@
+/* General Styles */
 .nav_image {
   display: flex;
   min-width: 55px;
@@ -66,14 +67,13 @@
   justify-content: space-between;
   margin-top: 19px;
   overflow-y: auto;
-  height: calc(100% - 82px);
 }
 .menu_container::-webkit-scrollbar {
   display: none;
 }
 .menu_title {
   position: relative;
-  height: 50px;
+  height: 47px;
   width: 55px;
 }
 .menu_title .title {
@@ -186,11 +186,33 @@
 }
 @media screen and (max-width: 800px) {
   .sidebar {
+    position: relative;
     left: 0;
     z-index: 1000;
   }
   .sidebar.close {
-    left: -100%;
+    width: 100%;
+    height: 9%;
+  }
+  .sidebar.locked {
+    width: 100%;
+  }
+  .sidebar.close > .menu_container {
+    display: none;
+  }
+  .sidebar > .logo_items > .nav_image {
+    display: none;
+  }
+
+  .sidebar.close > .logo_items > .logo_name {
+    opacity: 1;
+  }
+  .logo_name {
+    width: 100%;
+  }
+  .logo_name > img {
+    width: 70%;
+    margin: auto;
   }
   #sidebar-close {
     display: block;
@@ -243,4 +265,18 @@
   font-weight: 500;
   height: 50px;
   transition: all 0.3s ease;
+}
+
+/* Responsive for smaller screens */
+@media screen and (max-width: 600px) {
+  .navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    left: 0;
+    top: 0;
+    transform: translateX(0);
+    border-radius: 0;
+  }
 }
